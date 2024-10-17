@@ -1,9 +1,9 @@
 ---
-title: "Pagina interactiva"
+title: "Como crear tu Pg Web"
 author: "Luis Alberto Cubas Vasquez"
 format: html
 editor: visual
-Output-file: Index
+output-file: index
 ---
 
 ## Quarto
