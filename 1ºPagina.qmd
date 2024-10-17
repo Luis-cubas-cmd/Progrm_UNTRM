@@ -3,7 +3,7 @@ title: "Pagina interactiva"
 author: "Luis Alberto Cubas Vasquez"
 format: html
 editor: visual
-Output-file: INDEX
+Output-file: Index
 ---
 
 ## Quarto
