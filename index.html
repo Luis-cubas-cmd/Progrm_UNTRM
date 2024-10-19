@@ -119,10 +119,77 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>You can add options to executable code like this</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
+<pre><code>[1] 2</code></pre>
 </div>
 </div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+</section>
+<section id="modelo-linial" class="level1">
+<h1>Modelo Linial</h1>
+<section id="importar-data" class="level2">
+<h2 class="anchored" data-anchor-id="importar-data">Importar data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'readxl' was built under R version 4.3.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"LA MOLINA 2014 POTATO WUE (FB).xlsx"</span> , <span class="at">sheet =</span> <span class="dv">2</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 18
+  riego    geno  block bloque spad_29 spad_83 rwc_84 op_84 leafdw stemdw rootdw
+  &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 sequia   G01       2 II        56.3    41.1   61.5 -2.43  13.3   14.9    3.83
+2 sequia   G02       4 IV        52.7    47.9   63.2 -3.03   9.42   8.63   2.1 
+3 irrigado G01       3 III       49.2    41.6   67.7 -2.5   18.2   24.2    3.16
+4 sequia   G02       1 I         55.5    44.2   64.9 -2.4    8.84   6.58   2   
+5 irrigado G03       2 II        58.2    32.6   74.5 -2.27  14.6   12.6    1.83
+6 irrigado G04       5 V         43.5    37.8   74.0 -2.37  19.8   17.5    2.83
+# ℹ 7 more variables: tubdw &lt;dbl&gt;, biomdw &lt;dbl&gt;, hi &lt;dbl&gt;, ttrans &lt;dbl&gt;,
+#   wue &lt;dbl&gt;, twue &lt;dbl&gt;, lfa &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="modelo-linal" class="level1">
+<h1>Modelo linal</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>modelo <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> lfa <span class="sc">~</span> block <span class="sc">+</span> geno <span class="sc">+</span> riego <span class="sc">+</span>riego<span class="sc">*</span>geno, <span class="at">data =</span> data)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(modelo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: lfa
+            Df    Sum Sq   Mean Sq   F value Pr(&gt;F)    
+block        1   1147402   1147402    2.0661 0.1532    
+geno        14 261729564  18694969   33.6640 &lt;2e-16 ***
+riego        1 788556926 788556926 1419.9535 &lt;2e-16 ***
+geno:riego  14 108147972   7724855   13.9101 &lt;2e-16 ***
+Residuals  119  66085454    555340                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="instalar-ggplot2" class="level1">
+<h1>instalar ggplot2</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="graficar-con-blox-plot" class="level1">
+<h1>graficar con blox plot</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(geno),<span class="at">y =</span>lfa, <span class="at">fill=</span> <span class="fu">factor</span>(riego))) <span class="sc">+</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Grafica de lfa por Genotipo"</span>, <span class="at">x =</span> <span class="st">" Genotipo"</span>, <span class="at">y =</span> <span class="st">"lfa"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="primer-P-PW_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 
 </main>
