@@ -3,40 +3,29 @@ title: "Como crear tu Pg Web"
 author: "Luis Alberto Cubas Vasquez"
 format: html
 editor: visual
+toc: true
+toc-location: left
+number-sections: true
+embed-resources: true
 output-file: index
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
-```
-
-You can add options to executable code like this
-
-```{r}
-#| echo: false
-2 *1
-```
-
-# #Importar data xlsx
+# Importar data xlsx
 
 ## Leer el archivo de Excel y asignarlo a una variable
 
 ```{r}
+source('https://inkaverse.com/setup.r')
+
 library(readxl)
+
 data <- read_excel("LA MOLINA 2014 POTATO WUE (FB).xlsx", sheet = 2)
-head(data)
 data
 ```
 
-## ##Modelo lineal
+# Modelos lineales
+
+## Modelo lineal para la variable lfa
 
 ```{r}
 modelo <- lm(formula = lfa ~ bloque + geno + riego + riego*geno, data = data)
@@ -47,11 +36,8 @@ anova(modelo)
 ## Grafico en boxplot
 
 ```{r}
-
-#cargamos el paquete ggplot2
-library(ggplot2)
-
 # Crear un boxplot para visualizar los efectos de geno y riego
+
 ggplot(data, aes(x = factor(geno), y = lfa, fill = factor(riego))) +
   geom_boxplot() +
   labs(x = "Genotipo", y = "LFA (Respuesta)", fill = "Riego") +
@@ -87,14 +73,6 @@ str(tukey_interaccion)
 ```
 
 ```{r}
-library(tidyverse)
-library(dplyr)
-library(tidyr)
-library(purrr)
-library(stringr)
-```
-
-```{r}
 mc <- tukey_interaccion$groups%>%
   rownames_to_column("tr at")%>%
   separate(`tr at`, c("riego", "geno"))
@@ -113,7 +91,7 @@ ggplot(mc, aes(x = geno, y = lfa, fill = riego)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-### Comparación de medias: emmeans
+# Comparación de medias: emmeans
 
 ```{r}
 library(emmeans)
@@ -134,13 +112,60 @@ mc <- emmeans(modelo, ~ riego | geno)%>%
   mc
 ```
 
-Bloxplot
+## Bloxplot
 
 ```{r}
-ggplot(mc, aes(x = geno, y = emmean, fill = riego)) + 
-  geom_bar(stat = "identity", position = position_dodge()) + 
-  # geom_text(aes(label = groups), position = position_dodge(0.9), vjust = -0.5) + 
-  labs(x = "variedad", y = "LFA", fill = "Riego") + 
-  theme_minimal() + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggplot(mc, aes(x = geno, y = emmean, fill = riego)) +  
+  geom_bar(stat = "identity", position = position_dodge(), color = "black") +
+  labs(title = "Comparación de Medias - Medias Estimadas", 
+       x = "Genotipos", 
+       y = "hi") +
+  theme_minimal() +
+  theme(legend.title = element_blank()) +
+  scale_fill_discrete(name = "Riego")
+```
+
+# **Analisis multivariado**
+
+## Correlacion
+
+```{r}
+library(tidyverse)
+library(psych)
+
+data %>%
+  select_if(is.numeric) %>% 
+  dplyr::select(!c("block")) %>%
+                   pairs.panels(x = .
+             , hist.col="red"
+             , pch = 21
+             , stars = TRUE
+             , scale = FALSE
+             , lm = TRUE
+             )
+```
+
+## **Análisis de componentes principales "PCA"**
+
+```{r}
+library(FactoMineR)
+
+mc <- data %>% 
+  group_by(riego, geno) %>% 
+  summarise(across(where(is.numeric), ~ mean(., na.rm = TRUE))) %>% 
+  PCA(scale.unit = T, quali.sup = c(1:4), graph = F)
+
+
+p1 <- plot(mc
+     , choix="ind"
+     , habillage=1
+     , label = "ind"
+     )
+
+
+p2 <- plot(mc
+     , choix="var")
+
+list(p1, p2) %>% 
+  plot_grid(plotlist = ., nrow = 1)
 ```
