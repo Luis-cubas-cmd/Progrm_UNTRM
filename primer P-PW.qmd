@@ -33,7 +33,7 @@ You can add options to executable code like this
 library(readxl)
 data <- read_excel("LA MOLINA 2014 POTATO WUE (FB).xlsx", sheet = 2)
 head(data)
-
+data
 ```
 
 ## ##Modelo lineal
@@ -95,7 +95,6 @@ library(stringr)
 ```
 
 ```{r}
-
 mc <- tukey_interaccion$groups%>%
   rownames_to_column("tr at")%>%
   separate(`tr at`, c("riego", "geno"))
@@ -135,9 +134,7 @@ mc <- emmeans(modelo, ~ riego | geno)%>%
   mc
 ```
 
-```         
-Blox plot
-```
+Bloxplot
 
 ```{r}
 ggplot(mc, aes(x = geno, y = emmean, fill = riego)) + 
